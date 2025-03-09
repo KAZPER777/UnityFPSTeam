@@ -1,9 +1,12 @@
 using UnityEngine;
+using System.Collections;
 
-public class playerController : MonoBehaviour
+public class playerController : MonoBehaviour, IDamage
 {
+    [SerializeField] LayerMask ignoreLayer;
     [SerializeField] CharacterController controller;
 
+    [Range(1, 10)][SerializeField] int HP;
     [Range(2, 5)] [SerializeField] int speed;
     [Range(2, 4)] [SerializeField] int sprintMod;
     [Range(5, 20)] [SerializeField] int jumpSpeed;
@@ -90,7 +93,7 @@ public class playerController : MonoBehaviour
         shootTimer = 0;
 
         RaycastHit hit;
-        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, shootDist))
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, shootDist, ~ignoreLayer))
         {
             Debug.Log(hit.collider.name);
 
@@ -101,5 +104,23 @@ public class playerController : MonoBehaviour
                 dmg.takeDamage(shootDamage);
             }
         }
+    }
+
+    public void takeDamage(int amount)
+    {
+        HP -= amount;
+        StartCoroutine(flashDamageScreen());
+
+        if (HP <= 0)
+        {
+            gamemanager.instance.youLose();
+        }
+    }
+
+    IEnumerator flashDamageScreen()
+    {
+        gamemanager.instance.playerDamageScreen.SetActive(true);
+        yield return new WaitForSeconds(0.1f);
+        gamemanager.instance.playerDamageScreen.SetActive(false);
     }
 }
