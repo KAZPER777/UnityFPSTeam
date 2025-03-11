@@ -18,6 +18,7 @@ public class playerController : MonoBehaviour, IDamage
     [SerializeField] float shootRate;
 
     int jumpCount;
+    int HPOrig;
 
     float shootTimer;
 
@@ -27,7 +28,8 @@ public class playerController : MonoBehaviour, IDamage
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        HPOrig = HP;
+        updatePlayerUI();
     }
 
     // Update is called once per frame
@@ -109,6 +111,7 @@ public class playerController : MonoBehaviour, IDamage
     public void takeDamage(int amount)
     {
         HP -= amount;
+        updatePlayerUI();
         StartCoroutine(flashDamageScreen());
 
         if (HP <= 0)
@@ -122,5 +125,10 @@ public class playerController : MonoBehaviour, IDamage
         gamemanager.instance.playerDamageScreen.SetActive(true);
         yield return new WaitForSeconds(0.1f);
         gamemanager.instance.playerDamageScreen.SetActive(false);
+    }
+
+    public void updatePlayerUI()
+    {
+        gamemanager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
     }
 }

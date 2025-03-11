@@ -6,16 +6,22 @@ public class enemyAI : MonoBehaviour, IDamage
 {
     [SerializeField] Renderer model;
     [SerializeField] NavMeshAgent agent;
+    [SerializeField] Animator anim;
     
 
     [SerializeField] int HP;
+    [SerializeField] int faceTargetSpeed;
+    [SerializeField] int animTranSpeed;
 
     [SerializeField] Transform shootPos;
     [SerializeField] GameObject bullet;
     [SerializeField] float shootRate;
 
     float shootTimer;
-    
+
+    Vector3 playerDir;
+
+    bool playerInRange;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -26,20 +32,62 @@ public class enemyAI : MonoBehaviour, IDamage
     // Update is called once per frame
     void Update()
     {
-        agent.SetDestination(gamemanager.instance.player.transform.position);
+        setAnimLocomotion();
 
         shootTimer += Time.deltaTime;
 
-        if (shootTimer >= shootRate)
+        if (playerInRange)
         {
-            shoot();
+            playerDir = gamemanager.instance.player.transform.position - transform.position;
+            agent.SetDestination(gamemanager.instance.player.transform.position);
+
+            if (shootTimer >= shootRate)
+            {
+                shoot();
+            }
+
+            if (agent.remainingDistance <= agent.stoppingDistance)
+            {
+                faceTarget();
+            }
         }
+    }
+
+    void setAnimLocomotion()
+    {
+        float agentSpeed = agent.velocity.normalized.magnitude;
+        float animSpeedCur = anim.GetFloat("Speed");
+        anim.SetFloat("Speed", Mathf.Lerp(animSpeedCur, agentSpeed, Time.deltaTime * animTranSpeed));
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            playerInRange = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            playerInRange = false;
+        }
+    }
+
+    void faceTarget()
+    {
+        Quaternion rot = Quaternion.LookRotation(new Vector3(playerDir.x, transform.position.y, playerDir.z));
+        transform.rotation = Quaternion.Lerp(transform.rotation, rot, Time.deltaTime * faceTargetSpeed);
     }
 
     public void takeDamage(int amount)
     {
         HP -= amount;
         StartCoroutine(flashRed());
+
+        agent.SetDestination(gamemanager.instance.player.transform.position);
 
         if (HP <= 0)
         {
