@@ -110,6 +110,8 @@ public class playerController : MonoBehaviour, IDamage
 
     public void takeDamage(int amount)
     {
+        if (gamemanager.instance.godMode) return; // Ignoring damage if god mode is activated
+
         HP -= amount;
         updatePlayerUI();
         StartCoroutine(flashDamageScreen());

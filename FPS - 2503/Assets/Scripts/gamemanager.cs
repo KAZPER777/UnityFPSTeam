@@ -11,13 +11,16 @@ public class gamemanager : MonoBehaviour
     [SerializeField] GameObject menuWin;
     [SerializeField] GameObject menuLose;
     [SerializeField] TMP_Text goalCountText;
+    [SerializeField] GameObject menuConsole;
 
     public Image playerHPBar;
     public GameObject playerDamageScreen;
     public GameObject player;
     public playerController playerScript;
+    public TMP_InputField consoleInputField;
 
     public bool isPaused;
+    public bool godMode = false;
 
     int goalCount;
 
@@ -32,19 +35,8 @@ public class gamemanager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButtonDown("Cancel"))
-        {
-            if (menuActive == null)
-            {
-                statePause();
-                menuActive = menuPause;
-                menuActive.SetActive(true);
-            } 
-            else if (menuActive == menuPause)
-            {
-                stateUnpause();
-            }
-        }
+        TogglePause();
+        ToggleConsole();
     }
 
     public void statePause()
@@ -83,5 +75,51 @@ public class gamemanager : MonoBehaviour
         statePause();
         menuActive = menuLose;
         menuActive.SetActive(true);
+    }
+
+    public void ToggleGodMode(bool state)
+    {
+        godMode = state;
+
+        if (godMode)
+        {
+            playerDamageScreen.SetActive(false);
+        } else
+        {
+            playerDamageScreen.SetActive(true);
+        }
+    }
+
+    public void TogglePause()
+    {
+        if (Input.GetButtonDown("Cancel"))
+        {
+            if (menuActive == null)
+            {
+                statePause();
+                menuActive = menuPause;
+                menuActive.SetActive(true);
+            } else if (menuActive == menuPause)
+            {
+                stateUnpause();
+            }
+        }
+    }
+
+    public void ToggleConsole()
+    {
+        if (Input.GetKeyDown(KeyCode.BackQuote))
+        {
+            if (menuActive == null)
+            {
+                consoleInputField.ActivateInputField();
+                statePause();
+                menuActive = menuConsole;
+                menuActive.SetActive(true);
+            } else if (menuActive == menuConsole)
+            {
+                stateUnpause();
+            }
+        }
     }
 }
