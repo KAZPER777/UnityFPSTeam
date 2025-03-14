@@ -20,7 +20,7 @@ public class playerController : MonoBehaviour
 
     Vector3 moveDir;
     Vector3 playerVel;
-
+    //new
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
