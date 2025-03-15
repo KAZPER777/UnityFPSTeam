@@ -16,9 +16,12 @@ public class playerController : MonoBehaviour, IDamage
     [SerializeField] int shootDamage;
     [SerializeField] int shootDist;
     [SerializeField] float shootRate;
+    [SerializeField] float flySpeed;
 
     int jumpCount;
     int HPOrig;
+
+    bool isFlying = false;
 
     float shootTimer;
 
@@ -57,13 +60,23 @@ public class playerController : MonoBehaviour, IDamage
 
         moveDir = (Input.GetAxis("Horizontal") * transform.right) +
                   (Input.GetAxis("Vertical") * transform.forward);
-        controller.Move(moveDir * speed * Time.deltaTime);
 
-        jump();
+        if (isFlying)
+        {
+            float verticalInput = 0f;
+            if (Input.GetKey(KeyCode.Space)) verticalInput = 1f;
+            if (Input.GetKey(KeyCode.LeftControl)) verticalInput = -1f;
 
-        controller.Move(playerVel * Time.deltaTime);
-        playerVel.y -= gravity * Time.deltaTime;
+            moveDir += Vector3.up * verticalInput;
+            controller.Move(moveDir * flySpeed * Time.deltaTime);
+        } else
+        {
+            controller.Move(moveDir * speed * Time.deltaTime);
 
+            jump();
+            controller.Move(playerVel * Time.deltaTime);
+            playerVel.y -= gravity * Time.deltaTime;
+        }
 
         if(Input.GetButton("Fire1") && shootTimer >= shootRate)
             shoot();
@@ -132,5 +145,17 @@ public class playerController : MonoBehaviour, IDamage
     public void updatePlayerUI()
     {
         gamemanager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
+    }
+
+    public void ToggleFly(bool enable)
+    {
+        isFlying = enable;
+
+        if (enable)
+        {
+            playerVel = Vector3.zero;
+        }
+
+        Debug.Log(enable ? "Fly mode enabled!" : "Fly mode disabled!");
     }
 }

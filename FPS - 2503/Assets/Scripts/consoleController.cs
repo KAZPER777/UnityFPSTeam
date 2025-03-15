@@ -20,6 +20,7 @@ public class consoleController : MonoBehaviour
         commands = new Dictionary<string, System.Action<string[]>>()
         {
             { "godmode", ToggleGodModeCommand },
+            { "fly", ToggleFlyCommand },
             { "help", ShowHelp }
         };
 
@@ -60,6 +61,18 @@ public class consoleController : MonoBehaviour
         gamemanager.instance.ToggleGodMode(enable);
 
         LogOutput(enable ? "God mode enabled!" : "God mode disabled!");
+    }
+
+    void ToggleFlyCommand(string[] args)
+    {
+        bool enable = args.Length > 0 && args[0].ToLower() == "on";
+
+        playerController player = GetComponent<playerController>();
+        if (player != null)
+        {
+            player.ToggleFly(enable);
+            LogOutput(enable ? "Fly mode enabled!" : "Fly mode disabled!");
+        }
     }
 
     void ShowHelp(string[] args)

@@ -1,9 +1,13 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.AI;
+using UnityEngine.UIElements;
 
 public class enemyAI : MonoBehaviour, IDamage
 {
+    public enum EnemyType { Soldier, Drone }
+    public EnemyType enemyType;
+
     [SerializeField] Renderer model;
     [SerializeField] NavMeshAgent agent;
     [SerializeField] Animator anim;
@@ -43,12 +47,13 @@ public class enemyAI : MonoBehaviour, IDamage
 
             if (shootTimer >= shootRate)
             {
-                shoot();
+                
             }
 
-            if (agent.remainingDistance <= agent.stoppingDistance)
+            if (agent.remainingDistance <= agent.stoppingDistance && shootTimer >= shootRate)
             {
                 faceTarget();
+                shoot();
             }
         }
     }
@@ -78,8 +83,19 @@ public class enemyAI : MonoBehaviour, IDamage
 
     void faceTarget()
     {
-        Quaternion rot = Quaternion.LookRotation(new Vector3(playerDir.x, transform.position.y, playerDir.z));
-        transform.rotation = Quaternion.Lerp(transform.rotation, rot, Time.deltaTime * faceTargetSpeed);
+        if (enemyType == EnemyType.Soldier)
+        {
+            Quaternion rot = Quaternion.LookRotation(new Vector3(playerDir.x, transform.position.y, playerDir.z));
+            transform.rotation = Quaternion.Lerp(transform.rotation, rot, faceTargetSpeed);
+        }
+        else if (enemyType == EnemyType.Drone)
+        {
+            Vector3 targetPosition = gamemanager.instance.player.transform.position;
+            Vector3 lookDirection = (targetPosition - transform.position).normalized;
+
+            Quaternion rot = Quaternion.LookRotation(new Vector3(playerDir.x, playerDir.y, playerDir.z));
+            transform.rotation = Quaternion.Lerp(transform.rotation, rot, faceTargetSpeed);
+        }
     }
 
     public void takeDamage(int amount)

@@ -1045,6 +1045,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7c16ecba7dd5ac45a2ede1d98cef80c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyType: 0
   model: {fileID: 8858873573235539243}
   agent: {fileID: 2836165342545819029}
   anim: {fileID: 3375157648666702166}
