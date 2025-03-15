@@ -22,9 +22,23 @@ public class gamemanager : MonoBehaviour
     public bool isPaused;
     public bool godMode = false;
 
+    public GameObject easyRoomDoor;
+    public GameObject mediumRoomDoor;
+    public GameObject bossRoomDoor;
+    public GameObject bossRoomPromptUI;
+
+    public string roomType;
+
+    private int easyRoomEnemies;
+    private int mediumRoomEnemies;
+    private bool isPlayerNearBossDoor = false;
+
     int goalCount;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        gamemanager.instance.RegisterEnemy(roomType);
+    }
     void Awake()
     {
         instance = this;
@@ -32,12 +46,84 @@ public class gamemanager : MonoBehaviour
         playerScript = player.GetComponent<playerController>();
     }
 
-    // Update is called once per frame
     void Update()
     {
+        if (isPlayerNearBossDoor && Input.GetKeyDown(KeyCode.E))
+        {
+            EnterBossRoom();
+        }
+
         TogglePause();
         ToggleConsole();
     }
+
+    public void RegisterEnemy(string room)
+    {
+        if (room == "Easy")
+        {
+            easyRoomEnemies++;
+        }
+        else if (room == "Medium")
+        {
+            mediumRoomEnemies++;
+        }
+    }
+
+    public void EnemyDefeated(string room)
+    {
+        if (room == "Easy")
+        {
+            easyRoomEnemies--;
+            if (easyRoomEnemies <= 0)
+            {
+                OpenDoor(easyRoomDoor);
+            }
+        }
+        else if (room == "Medium")
+        {
+            mediumRoomEnemies--;
+            if (mediumRoomEnemies <= 0)
+            {
+                OpenDoor(mediumRoomDoor);
+            }
+        }
+    }
+
+    void OpenDoor(GameObject door)
+    {
+        if (door != null)
+        {
+            door.SetActive(false);
+        }
+    }
+
+    public void TryEnterBossRoom()
+    {
+        bossRoomPromptUI.SetActive(true);
+        isPlayerNearBossDoor = true;
+    }
+
+    public void EnterBossRoom()
+    {
+        bossRoomPromptUI.SetActive(false);
+        isPlayerNearBossDoor = false;
+
+        Collider blockingCollider = bossRoomDoor.GetComponent<Collider>();
+        if (blockingCollider != null && !blockingCollider.isTrigger)
+        {
+            Destroy(blockingCollider);
+        }
+
+        bossRoomDoor.SetActive(false);
+    }
+
+    public void BossDefeated()
+    {
+        statePause();
+        menuActive = menuWin;
+        menuActive.SetActive(true);
+    }
+    
 
     public void statePause()
     {

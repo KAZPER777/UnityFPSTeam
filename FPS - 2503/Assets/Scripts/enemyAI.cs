@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 
 public class enemyAI : MonoBehaviour, IDamage
 {
-    public enum EnemyType { Soldier, Drone }
+    public enum EnemyType { Soldier, Drone, Boss }
     public EnemyType enemyType;
 
     [SerializeField] Renderer model;
@@ -21,16 +21,26 @@ public class enemyAI : MonoBehaviour, IDamage
     [SerializeField] GameObject bullet;
     [SerializeField] float shootRate;
 
+    [Header("Boss Settings")]
+    [SerializeField] bool isBoss;
+    [SerializeField] GameObject bossRoomDoor;
+
     float shootTimer;
-
     Vector3 playerDir;
-
     bool playerInRange;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         gamemanager.instance.updateGameGoal(1);
+
+        if (enemyType == EnemyType.Drone)
+        {
+            gamemanager.instance.RegisterEnemy("Easy");
+        } else if (enemyType == EnemyType.Soldier)
+        {
+            gamemanager.instance.RegisterEnemy("Medium");
+        }
     }
 
     // Update is called once per frame
@@ -82,17 +92,8 @@ public class enemyAI : MonoBehaviour, IDamage
 
     void faceTarget()
     {
-        if (enemyType == EnemyType.Soldier)
         {
             Quaternion rot = Quaternion.LookRotation(new Vector3(playerDir.x, transform.position.y, playerDir.z));
-            transform.rotation = Quaternion.Lerp(transform.rotation, rot, faceTargetSpeed * Time.deltaTime);
-        }
-        else if (enemyType == EnemyType.Drone)
-        {
-            Vector3 targetPosition = gamemanager.instance.player.transform.position;
-            Vector3 lookDirection = (targetPosition - transform.position).normalized;
-
-            Quaternion rot = Quaternion.LookRotation(new Vector3(playerDir.x, playerDir.y, playerDir.z));
             transform.rotation = Quaternion.Lerp(transform.rotation, rot, faceTargetSpeed * Time.deltaTime);
         }
     }
@@ -101,12 +102,25 @@ public class enemyAI : MonoBehaviour, IDamage
     {
         HP -= amount;
         StartCoroutine(flashRed());
+        
 
         agent.SetDestination(gamemanager.instance.player.transform.position);
 
         if (HP <= 0)
         {
             gamemanager.instance.updateGameGoal(-1);
+
+            if (enemyType == EnemyType.Drone)
+            {
+                gamemanager.instance.EnemyDefeated("Easy");
+            } else if (enemyType == EnemyType.Soldier)
+            {
+                gamemanager.instance.EnemyDefeated("Medium");
+            } else if (enemyType == EnemyType.Boss)
+            {
+                gamemanager.instance.BossDefeated();
+            }
+
             Destroy(gameObject);
         }
     }

@@ -28,7 +28,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 799886364273095117}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.123849176, z: -0, w: 0.9923011}
+  m_LocalRotation: {x: 0, y: -0.123852514, z: 0, w: 0.9923007}
   m_LocalPosition: {x: -20.12, y: 1, z: -22.98}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -52,7 +52,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   controller: {fileID: 7667789424888002161}
-  HP: 10
+  HP: 100
   speed: 5
   sprintMod: 3
   jumpSpeed: 12
@@ -61,6 +61,7 @@ MonoBehaviour:
   shootDamage: 1
   shootDist: 200
   shootRate: 0.25
+  flySpeed: 0
 --- !u!143 &7667789424888002161
 CharacterController:
   m_ObjectHideFlags: 0
