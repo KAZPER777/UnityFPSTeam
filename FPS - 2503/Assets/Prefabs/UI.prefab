@@ -3552,6 +3552,11 @@ MonoBehaviour:
   consoleInputField: {fileID: 8689095953784709986}
   isPaused: 0
   godMode: 0
+  easyRoomDoor: {fileID: 0}
+  mediumRoomDoor: {fileID: 0}
+  bossRoomDoor: {fileID: 0}
+  bossRoomPromptUI: {fileID: 0}
+  roomType: 
 --- !u!1 &5615837560540979771
 GameObject:
   m_ObjectHideFlags: 0
@@ -3696,7 +3701,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Quit
+  m_text: Main Menu
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4449,7 +4454,7 @@ GameObject:
   - component: {fileID: 6614248268919484483}
   - component: {fileID: 5738950864804158729}
   m_Layer: 5
-  m_Name: Quit
+  m_Name: Main Menu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4559,7 +4564,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1818065357123969469}
         m_TargetAssemblyTypeName: buttonFunctions, Assembly-CSharp
-        m_MethodName: quit
+        m_MethodName: MainMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

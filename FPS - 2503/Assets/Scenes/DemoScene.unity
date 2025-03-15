@@ -4951,6 +4951,10 @@ PrefabInstance:
       value: Main Menu
       objectReference: {fileID: 0}
     - target: {fileID: 4328033417087158226, guid: 0fddf6e5d89b12c42a3dbfece89c522e, type: 3}
+      propertyPath: targetTime
+      value: 360
+      objectReference: {fileID: 0}
+    - target: {fileID: 4328033417087158226, guid: 0fddf6e5d89b12c42a3dbfece89c522e, type: 3}
       propertyPath: bossRoomDoor
       value: 
       objectReference: {fileID: 523622782}
