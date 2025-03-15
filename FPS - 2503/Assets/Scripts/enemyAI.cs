@@ -45,13 +45,12 @@ public class enemyAI : MonoBehaviour, IDamage
 
             if (shootTimer >= shootRate)
             {
-                
+                shoot();
             }
 
-            if (agent.remainingDistance <= agent.stoppingDistance && shootTimer >= shootRate)
+            if (agent.remainingDistance <= agent.stoppingDistance)
             {
                 faceTarget();
-                shoot();
             }
         }
     }
