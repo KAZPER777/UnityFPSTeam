@@ -11,9 +11,13 @@ public class gamemanager : MonoBehaviour
     [SerializeField] GameObject menuWin;
     [SerializeField] GameObject menuLose;
     [SerializeField] TMP_Text goalCountText;
+    [SerializeField] TMP_Text timerText;
     [SerializeField] GameObject menuConsole;
 
+
+    [Range(60,360)] public float targetTime;
     public Image playerHPBar;
+    public Image playerShieldBar;
     public GameObject playerDamageScreen;
     public GameObject player;
     public playerController playerScript;
@@ -43,6 +47,7 @@ public class gamemanager : MonoBehaviour
     {
         instance = this;
         player = GameObject.FindWithTag("Player");
+        timerText.text = targetTime.ToString("F0");
         playerScript = player.GetComponent<playerController>();
     }
 
@@ -55,6 +60,7 @@ public class gamemanager : MonoBehaviour
 
         TogglePause();
         ToggleConsole();
+        UpdateTimer();
     }
 
     public void RegisterEnemy(string room)
@@ -206,6 +212,16 @@ public class gamemanager : MonoBehaviour
             {
                 stateUnpause();
             }
+        }
+    }
+
+    public void UpdateTimer()
+    {
+        targetTime -= Time.deltaTime;
+        timerText.text = targetTime.ToString("F0"); 
+        if (targetTime <= 0.0f)  //Bring up lose screen when player runs out of time
+        {
+            youLose();
         }
     }
 }
