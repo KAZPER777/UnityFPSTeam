@@ -1,9 +1,12 @@
 using UnityEngine;
+using System.Collections;
 
-public class playerController : MonoBehaviour
+public class playerController : MonoBehaviour, IDamage
 {
+    [SerializeField] LayerMask ignoreLayer;
     [SerializeField] CharacterController controller;
 
+    [Range(1, 10)][SerializeField] int HP;
     [Range(2, 5)] [SerializeField] int speed;
     [Range(2, 4)] [SerializeField] int sprintMod;
     [Range(5, 20)] [SerializeField] int jumpSpeed;
@@ -13,8 +16,12 @@ public class playerController : MonoBehaviour
     [SerializeField] int shootDamage;
     [SerializeField] int shootDist;
     [SerializeField] float shootRate;
+    [SerializeField] float flySpeed;
 
     int jumpCount;
+    int HPOrig;
+
+    bool isFlying = false;
 
     float shootTimer;
 
@@ -24,7 +31,8 @@ public class playerController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        HPOrig = HP;
+        updatePlayerUI();
     }
 
     // Update is called once per frame
@@ -52,13 +60,23 @@ public class playerController : MonoBehaviour
 
         moveDir = (Input.GetAxis("Horizontal") * transform.right) +
                   (Input.GetAxis("Vertical") * transform.forward);
-        controller.Move(moveDir * speed * Time.deltaTime);
 
-        jump();
+        if (isFlying)
+        {
+            float verticalInput = 0f;
+            if (Input.GetKey(KeyCode.Space)) verticalInput = 1f;
+            if (Input.GetKey(KeyCode.LeftControl)) verticalInput = -1f;
 
-        controller.Move(playerVel * Time.deltaTime);
-        playerVel.y -= gravity * Time.deltaTime;
+            moveDir += Vector3.up * verticalInput;
+            controller.Move(moveDir * flySpeed * Time.deltaTime);
+        } else
+        {
+            controller.Move(moveDir * speed * Time.deltaTime);
 
+            jump();
+            controller.Move(playerVel * Time.deltaTime);
+            playerVel.y -= gravity * Time.deltaTime;
+        }
 
         if(Input.GetButton("Fire1") && shootTimer >= shootRate)
             shoot();
@@ -90,7 +108,7 @@ public class playerController : MonoBehaviour
         shootTimer = 0;
 
         RaycastHit hit;
-        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, shootDist))
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, shootDist, ~ignoreLayer))
         {
             Debug.Log(hit.collider.name);
 
@@ -101,5 +119,43 @@ public class playerController : MonoBehaviour
                 dmg.takeDamage(shootDamage);
             }
         }
+    }
+
+    public void takeDamage(int amount)
+    {
+        if (gamemanager.instance.godMode) return; // Ignoring damage if god mode is activated
+
+        HP -= amount;
+        updatePlayerUI();
+        StartCoroutine(flashDamageScreen());
+
+        if (HP <= 0)
+        {
+            gamemanager.instance.youLose();
+        }
+    }
+
+    IEnumerator flashDamageScreen()
+    {
+        gamemanager.instance.playerDamageScreen.SetActive(true);
+        yield return new WaitForSeconds(0.1f);
+        gamemanager.instance.playerDamageScreen.SetActive(false);
+    }
+
+    public void updatePlayerUI()
+    {
+        gamemanager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
+    }
+
+    public void ToggleFly(bool enable)
+    {
+        isFlying = enable;
+
+        if (enable)
+        {
+            playerVel = Vector3.zero;
+        }
+
+        Debug.Log(enable ? "Fly mode enabled!" : "Fly mode disabled!");
     }
 }
