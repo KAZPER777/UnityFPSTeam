@@ -9,27 +9,25 @@ public class headbob : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
+        bool isWalking = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D);
+        bool isSprinting = isWalking && Input.GetKey(KeyCode.LeftShift);
+
+        if (isSprinting)
         {
+            camAnim.ResetTrigger("Walk");
             camAnim.ResetTrigger("Idle");
-            walking = true;
+            camAnim.SetTrigger("Sprint");
+        }
+        else if (isWalking)
+        {
             camAnim.ResetTrigger("Sprint");
+            camAnim.ResetTrigger("Idle");
             camAnim.SetTrigger("Walk");
-            if (walking)
-            {
-                if (Input.GetKey(KeyCode.LeftShift))
-                {
-                    camAnim.ResetTrigger("Walk");
-                    camAnim.ResetTrigger("Idle");
-                    camAnim.SetTrigger("Sprint");
-                }
-            }
         }
         else
         {
-            camAnim.ResetTrigger("Sprint");
-            walking = false;
             camAnim.ResetTrigger("Walk");
+            camAnim.ResetTrigger("Sprint");
             camAnim.SetTrigger("Idle");
         }
     }
