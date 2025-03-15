@@ -2,6 +2,10 @@ using UnityEngine;
 
 public class playerController : MonoBehaviour
 {
+    //teleport
+    public bool disabled = false;
+
+
     [SerializeField] CharacterController controller;
 
     [Range(2, 5)] [SerializeField] int speed;
@@ -30,38 +34,45 @@ public class playerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * shootDist, Color.red);
+        
+        
+            Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * shootDist, Color.red);
 
-        Movement();
+            Movement();
 
-        sprint();
+            sprint();
+        
     }
 
-    void Movement() 
+    void Movement()
     {
-        shootTimer += Time.deltaTime;
-
-        if (controller.isGrounded) 
+        //teleport
+        if (!disabled)
         {
-            jumpCount = 0;
-            playerVel = Vector3.zero;
+            shootTimer += Time.deltaTime;
+
+            if (controller.isGrounded)
+            {
+                jumpCount = 0;
+                playerVel = Vector3.zero;
+            }
+
+            //moveDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+            //transform.position += moveDir * speed * Time.deltaTime;\
+
+            moveDir = (Input.GetAxis("Horizontal") * transform.right) +
+                      (Input.GetAxis("Vertical") * transform.forward);
+            controller.Move(moveDir * speed * Time.deltaTime);
+
+            jump();
+
+            controller.Move(playerVel * Time.deltaTime);
+            playerVel.y -= gravity * Time.deltaTime;
+
+
+            if (Input.GetButton("Fire1") && shootTimer >= shootRate)
+                shoot();
         }
-
-        //moveDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-        //transform.position += moveDir * speed * Time.deltaTime;\
-
-        moveDir = (Input.GetAxis("Horizontal") * transform.right) +
-                  (Input.GetAxis("Vertical") * transform.forward);
-        controller.Move(moveDir * speed * Time.deltaTime);
-
-        jump();
-
-        controller.Move(playerVel * Time.deltaTime);
-        playerVel.y -= gravity * Time.deltaTime;
-
-
-        if(Input.GetButton("Fire1") && shootTimer >= shootRate)
-            shoot();
     }
 
     void jump() 
