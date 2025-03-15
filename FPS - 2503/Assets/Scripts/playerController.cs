@@ -23,6 +23,12 @@ public class playerController : MonoBehaviour, IDamage
     [SerializeField] float shootRate;
     [SerializeField] float flySpeed;
 
+    public CharacterController PlayerHeight;
+    public CapsuleCollider playerCol;
+    public float normalHeight, crouchHeight;
+    public Transform player;
+    public Vector3 offset;
+
     int jumpCount;
     int HPOrig;
 
@@ -81,6 +87,19 @@ public class playerController : MonoBehaviour, IDamage
 
             if (Input.GetButton("Fire1") && shootTimer >= shootRate)
                 shoot();
+
+            // Crouch
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                PlayerHeight.height = crouchHeight;
+                playerCol.height = crouchHeight;
+            }
+            if (Input.GetKeyUp(KeyCode.C))
+            {
+                PlayerHeight.height = normalHeight;
+                playerCol.height = normalHeight;
+                player.position = player.position + offset;
+            }
         }
     }
 
