@@ -60,7 +60,7 @@ MonoBehaviour:
   faceTargetSpeed: 5
   animTranSpeed: 3
   shootPos: {fileID: 791684942110286684}
-  bullet: {fileID: 9006145975680656132, guid: 10a5c3606b779e549ac27a4bdcc18fda, type: 3}
+  bullet: {fileID: 9006145975680656132, guid: 1aa750cb5b20cac44b3c0f33bc051aa0, type: 3}
   shootRate: 0.5
 --- !u!195 &8942257266625169985
 NavMeshAgent:

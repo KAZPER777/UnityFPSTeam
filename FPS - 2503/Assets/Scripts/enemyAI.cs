@@ -47,13 +47,12 @@ public class enemyAI : MonoBehaviour, IDamage
 
             if (shootTimer >= shootRate)
             {
-                
+                shoot();
             }
 
-            if (agent.remainingDistance <= agent.stoppingDistance && shootTimer >= shootRate)
+            if (agent.remainingDistance <= agent.stoppingDistance)
             {
                 faceTarget();
-                shoot();
             }
         }
     }
@@ -86,7 +85,7 @@ public class enemyAI : MonoBehaviour, IDamage
         if (enemyType == EnemyType.Soldier)
         {
             Quaternion rot = Quaternion.LookRotation(new Vector3(playerDir.x, transform.position.y, playerDir.z));
-            transform.rotation = Quaternion.Lerp(transform.rotation, rot, faceTargetSpeed);
+            transform.rotation = Quaternion.Lerp(transform.rotation, rot, faceTargetSpeed * Time.deltaTime);
         }
         else if (enemyType == EnemyType.Drone)
         {
@@ -94,7 +93,7 @@ public class enemyAI : MonoBehaviour, IDamage
             Vector3 lookDirection = (targetPosition - transform.position).normalized;
 
             Quaternion rot = Quaternion.LookRotation(new Vector3(playerDir.x, playerDir.y, playerDir.z));
-            transform.rotation = Quaternion.Lerp(transform.rotation, rot, faceTargetSpeed);
+            transform.rotation = Quaternion.Lerp(transform.rotation, rot, faceTargetSpeed * Time.deltaTime);
         }
     }
 
