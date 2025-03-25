@@ -9,21 +9,15 @@ public class gamemanager : MonoBehaviour
     [SerializeField] GameObject menuActive;
     [SerializeField] GameObject menuPause;
     [SerializeField] GameObject menuWin;
-    [SerializeField] GameObject menuUpgrade;
     [SerializeField] GameObject menuLose;
     [SerializeField] TMP_Text goalCountText;
     [SerializeField] TMP_Text timerText;
     [SerializeField] GameObject menuConsole;
-    [SerializeField] TMP_Text HPUpgradesText;
-    [SerializeField] TMP_Text DMGUpgradesText;
-    [SerializeField] TMP_Text XPText;
 
 
     [Range(60,360)] public float targetTime;
-    [Range(1, 50)][SerializeField] int baseXP;
     public Image playerHPBar;
     public Image playerShieldBar;
-    public Image playerXPBar;
     public GameObject playerDamageScreen;
     public GameObject player;
     public playerController playerScript;
@@ -32,23 +26,9 @@ public class gamemanager : MonoBehaviour
     public bool isPaused;
     public bool godMode = false;
 
-    public GameObject easyRoomDoor;
-    public GameObject mediumRoomDoor;
-    public GameObject bossRoomDoor;
-    public GameObject bossRoomPromptUI;
-
-    public string roomType;
-
-    private int easyRoomEnemies;
-    private int mediumRoomEnemies;
-    private bool isPlayerNearBossDoor = false;
-
     int goalCount;
 
-    void Start()
-    {
-        gamemanager.instance.RegisterEnemy(roomType);
-    }
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
         instance = this;
@@ -57,91 +37,13 @@ public class gamemanager : MonoBehaviour
         playerScript = player.GetComponent<playerController>();
     }
 
+    // Update is called once per frame
     void Update()
     {
-        if (isPlayerNearBossDoor && Input.GetKeyDown(KeyCode.E))
-        {
-            EnterBossRoom();
-        }
-
         TogglePause();
         ToggleConsole();
-        ToggleUpgrade();
         UpdateTimer();
     }
-
-    public void RegisterEnemy(string room)
-    {
-        if (room == "Easy")
-        {
-            easyRoomEnemies++;
-        }
-        else if (room == "Medium")
-        {
-            mediumRoomEnemies++;
-        }
-    }
-
-    public void EnemyDefeated(string room)
-    {
-        if (room == "Easy")
-        {
-            easyRoomEnemies--;
-            playerScript.XP += baseXP;
-            if (easyRoomEnemies <= 0)
-            {
-                playerScript.XP += (int)(baseXP * 1.25);
-                OpenDoor(easyRoomDoor);
-            }
-        }
-        else if (room == "Medium")
-        {
-            mediumRoomEnemies--;
-            playerScript.XP += (int)(baseXP * 1.5);
-            if (mediumRoomEnemies <= 0)
-            {
-                playerScript.XP += baseXP * 2;
-                OpenDoor(mediumRoomDoor);
-            }
-        }
-        UpdateXPText();
-    }
-
-    void OpenDoor(GameObject door)
-    {
-        if (door != null)
-        {
-            door.SetActive(false);
-        }
-    }
-
-    public void TryEnterBossRoom()
-    {
-        bossRoomPromptUI.SetActive(true);
-        isPlayerNearBossDoor = true;
-    }
-
-    public void EnterBossRoom()
-    {
-        bossRoomPromptUI.SetActive(false);
-        isPlayerNearBossDoor = false;
-
-        Collider blockingCollider = bossRoomDoor.GetComponent<Collider>();
-        if (blockingCollider != null && !blockingCollider.isTrigger)
-        {
-            Destroy(blockingCollider);
-        }
-
-        bossRoomDoor.SetActive(false);
-    }
-
-    public void BossDefeated()
-    {
-        statePause();
-        menuActive = menuWin;
-        menuActive.SetActive(true);
-    }
-    
 
     public void statePause()
     {
@@ -227,22 +129,6 @@ public class gamemanager : MonoBehaviour
         }
     }
 
-    public void ToggleUpgrade()
-    {
-        if (Input.GetButtonDown("Upgrade"))
-        {
-            if(menuActive == null)
-            {
-                statePause();
-                menuActive = menuUpgrade;
-                menuActive.SetActive(true);
-            }else if (menuActive == menuUpgrade)
-            {
-                stateUnpause();
-            }
-        }
-    }
-
     public void UpdateTimer()
     {
         targetTime -= Time.deltaTime;
@@ -251,16 +137,5 @@ public class gamemanager : MonoBehaviour
         {
             youLose();
         }
-    }
-
-    public void UpdateXPText()
-    {
-        XPText.text = playerScript.XP.ToString("F0");
-    }
-
-    public void UpdateUpgradeTxt()
-    {
-        HPUpgradesText.text = playerScript.HPMax.ToString("F0");
-        DMGUpgradesText.text = playerScript.dmgMult.ToString("F");
     }
 }

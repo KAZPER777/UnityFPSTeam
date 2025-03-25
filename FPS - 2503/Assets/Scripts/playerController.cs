@@ -23,6 +23,9 @@ public class playerController : MonoBehaviour, IDamage
     [SerializeField] float shootRate;
     [SerializeField] float flySpeed;
 
+    [Range(0,999)]public int XP;
+    public float dmgMult;
+    public int HPMax;
     public CharacterController PlayerHeight;
     public CapsuleCollider playerCol;
     public float normalHeight, crouchHeight;
@@ -31,6 +34,8 @@ public class playerController : MonoBehaviour, IDamage
 
     int jumpCount;
     int HPOrig;
+
+    [Range(0,1)][SerializeField]float upgradePercent;
 
     bool isFlying = false;
 
@@ -43,6 +48,7 @@ public class playerController : MonoBehaviour, IDamage
     void Start()
     {
         HPOrig = HP;
+        HPMax = HP;
         updatePlayerUI();
     }
 
@@ -137,7 +143,7 @@ public class playerController : MonoBehaviour, IDamage
 
             if (dmg != null)
             {
-                dmg.takeDamage(shootDamage);
+                dmg.takeDamage((int)(shootDamage * dmgMult));
             }
         }
     }
@@ -165,7 +171,10 @@ public class playerController : MonoBehaviour, IDamage
 
     public void updatePlayerUI()
     {
-        gamemanager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
+        gamemanager.instance.playerHPBar.fillAmount = (float)HP / HPMax;
+        gamemanager.instance.playerXPBar.fillAmount = (float)XP / 100;
+        gamemanager.instance.UpdateXPText();
+        gamemanager.instance.UpdateUpgradeTxt();
     }
 
     public void ToggleFly(bool enable)
@@ -178,5 +187,19 @@ public class playerController : MonoBehaviour, IDamage
         }
 
         Debug.Log(enable ? "Fly mode enabled!" : "Fly mode disabled!");
+    }
+
+    public void upgrade(string type)
+    {
+        XP -= 100;
+        if(type == "HP")
+        {
+            HPMax = (int)(HPMax*((float)1 + upgradePercent));
+            HP = HPMax;
+        }else if(type == "DMG")
+        {
+            dmgMult += upgradePercent;
+        }
+        updatePlayerUI();
     }
 }

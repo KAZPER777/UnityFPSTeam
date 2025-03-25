@@ -18,4 +18,29 @@ public class buttonFunctions : MonoBehaviour
     {
         SceneManager.LoadScene("StartScene");
     }
+
+    public void quit()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
+    }
+
+    //Upgrade Menu Buttons
+    public void healthUp()
+    {
+        if (gamemanager.instance.playerScript.XP >= 100)
+        {
+            gamemanager.instance.playerScript.upgrade("HP");
+        }
+    }
+    public void dmgUp()
+    {
+        if (gamemanager.instance.playerScript.XP >= 100)
+        {
+            gamemanager.instance.playerScript.upgrade("DMG");
+        }
+    }
 }
