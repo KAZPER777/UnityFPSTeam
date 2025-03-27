@@ -3,7 +3,14 @@ using System.Collections;
 
 public class playerController : MonoBehaviour, IDamage
 {
+<<<<<<< HEAD
     [SerializeField] LayerMask ignoreLayer;
+=======
+    //teleport
+    public bool disabled = false;
+
+
+>>>>>>> origin/Silver
     [SerializeField] CharacterController controller;
 
     [Range(1, 100)][SerializeField] int HP;
@@ -27,7 +34,7 @@ public class playerController : MonoBehaviour, IDamage
 
     Vector3 moveDir;
     Vector3 playerVel;
-
+    //new
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -38,22 +45,46 @@ public class playerController : MonoBehaviour, IDamage
     // Update is called once per frame
     void Update()
     {
-        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * shootDist, Color.red);
+        
+        
+            Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * shootDist, Color.red);
 
-        Movement();
+            Movement();
 
-        sprint();
+            sprint();
+        
     }
 
-    void Movement() 
+    void Movement()
     {
-        shootTimer += Time.deltaTime;
-
-        if (controller.isGrounded) 
+        //teleport
+        if (!disabled)
         {
-            jumpCount = 0;
-            playerVel = Vector3.zero;
+            shootTimer += Time.deltaTime;
+
+            if (controller.isGrounded)
+            {
+                jumpCount = 0;
+                playerVel = Vector3.zero;
+            }
+
+            //moveDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+            //transform.position += moveDir * speed * Time.deltaTime;\
+
+            moveDir = (Input.GetAxis("Horizontal") * transform.right) +
+                      (Input.GetAxis("Vertical") * transform.forward);
+            controller.Move(moveDir * speed * Time.deltaTime);
+
+            jump();
+
+            controller.Move(playerVel * Time.deltaTime);
+            playerVel.y -= gravity * Time.deltaTime;
+
+
+            if (Input.GetButton("Fire1") && shootTimer >= shootRate)
+                shoot();
         }
+<<<<<<< HEAD
 
         //moveDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         //transform.position += moveDir * speed * Time.deltaTime;\
@@ -80,6 +111,8 @@ public class playerController : MonoBehaviour, IDamage
 
         if(Input.GetButton("Fire1") && shootTimer >= shootRate)
             shoot();
+=======
+>>>>>>> origin/Silver
     }
 
     void jump() 
